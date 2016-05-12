@@ -16,6 +16,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.UnaryTree;
 
 public class NonNegAnnotatedTypeFactory extends GenericAnnotatedTypeFactory<CFValue, CFStore, NonNegTransfer, NonNegAnalysis> {
 	protected final AnnotationMirror UNKNOWNINT, NONNEGATIVE;
@@ -66,5 +67,13 @@ public class NonNegAnnotatedTypeFactory extends GenericAnnotatedTypeFactory<CFVa
             }
             return super.visitLiteral(tree, type);
         }
+		
+		@Override
+		public Void visitUnary(UnaryTree tree, AnnotatedTypeMirror type) {
+			if (tree.getKind() == Tree.Kind.POSTFIX_DECREMENT) {
+				type.addAnnotation(createUnknownAnnotation());
+			}
+			return super.visitUnary(tree, type);
+		}
 	}
 }
